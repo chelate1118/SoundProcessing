@@ -28,4 +28,7 @@ fn main() {
     println!("Hello, World!");
 
     std::thread::sleep(std::time::Duration::from_millis(2000));
+    sound::add_filter();
+    println!("Filter!");
+    std::thread::sleep(std::time::Duration::from_millis(2000));
 }
