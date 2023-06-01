@@ -8,11 +8,7 @@ enum class State {
 }
 
 class Order(val priority: Priority): Comparable<Order> {
-    val id = currentId
-    
-    init {
-        currentId += 1
-    }
+    val id = currentId++
     
     enum class Priority {
         Background,
