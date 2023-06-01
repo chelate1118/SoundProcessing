@@ -7,6 +7,23 @@ enum class State {
     Alive
 }
 
+abstract class Component(
+    val sketch: Processing,
+    priority: Order.Priority
+): Comparable<Component> {
+    protected val order = Order(priority)
+
+    abstract fun onCreated()
+    abstract fun update(): State
+    abstract fun display()
+    fun onDestroy() {}
+    fun isMouseIn(): Boolean = false
+    fun mouseIn() {}
+    fun mouseClick() {}
+
+    override fun compareTo(other: Component) = order.compareTo(other.order)
+}
+
 class Order(val priority: Priority): Comparable<Order> {
     val id = currentId++
     
@@ -27,14 +44,4 @@ class Order(val priority: Priority): Comparable<Order> {
     companion object {
         var currentId = 0
     }
-}
-
-abstract class Component(val sketch: Processing) {
-    abstract fun onCreated()
-    abstract fun update(): State
-    abstract fun display()
-    fun onDestroy() {}
-    fun isMouseIn(): Boolean = false
-    fun mouseIn() {}
-    fun mouseClick() {}
 }

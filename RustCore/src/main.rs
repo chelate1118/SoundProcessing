@@ -3,11 +3,15 @@ mod sound;
 #[macro_use]
 extern crate lazy_static;
 
+use std::net::TcpStream;
 use std::sync::Mutex;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::Sample;
 
 fn main() {
+    let args = std::env::args().collect::<Vec<String>>();
+    let ip = args[1].clone();
+    TcpStream::connect(format!("localhost:{ip}")).expect("cannot connect!");
     let host = cpal::default_host();
     let device = host.default_output_device().expect("no output device.");
 

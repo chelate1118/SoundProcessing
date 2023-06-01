@@ -1,16 +1,21 @@
 package sound.ui.filter
 
-import processing.core.PVector
 import sound.Processing
+import sound.ui.Component
+import sound.ui.Order
+import sound.ui.State
 
-class Filter(private val sketch: Processing) {
-    lateinit var position: PVector
-    lateinit var text: String
-
-    fun display() {
-        with (sketch) {
-            ellipse(position.x, position.y, width/4F, height/4F)
-            text(text, 10F, 10F)
-        }
+class Filter(sketch: Processing): Component(sketch, Order.Priority.Top) {
+    override fun onCreated() {
+        TODO("Not yet implemented")
     }
+
+    override fun update(): State {
+        TODO("Not yet implemented")
+    }
+
+    override fun display() {
+        TODO("Not yet implemented")
+    }
+
 }

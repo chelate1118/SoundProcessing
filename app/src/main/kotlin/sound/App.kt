@@ -4,6 +4,7 @@
 package sound
 
 import processing.core.*
+import sound.rust.Rust
 import sound.ui.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -19,7 +20,7 @@ class Processing: PApplet() {
     }
     
     override fun setup() {
-        
+        Rust.start()
     }
     
     override fun draw() {
