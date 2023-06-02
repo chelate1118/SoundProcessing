@@ -13,7 +13,7 @@ class Background(sketch: Processing): Component(sketch, Order.Priority.Backgroun
         sketch.background(color)
     }
     
-    override fun isMouseIn(position: PVector): Boolean = true
+    override fun isMouseIn(mousePosition: PVector): Boolean = true
 
     override fun mouseClicked() {
         with (sketch) {

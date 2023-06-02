@@ -18,7 +18,7 @@ abstract class Component(
     abstract fun update(): State
     abstract fun display()
     open fun onDestroy() {}
-    open fun isMouseIn(position: PVector): Boolean = false
+    abstract fun isMouseIn(mousePosition: PVector): Boolean
     open fun mouseIn() {}
     open fun mouseClicked() {}
 
