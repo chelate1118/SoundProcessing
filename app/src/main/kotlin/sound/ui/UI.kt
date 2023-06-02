@@ -27,7 +27,7 @@ class UI(private val sketch: Processing) {
         }
     }
 
-    fun mouseClicked() {
+    fun mousePressed() {
         mouseComponent = null
 
         for (component in uiComponents) {
