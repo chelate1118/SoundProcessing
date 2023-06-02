@@ -5,7 +5,7 @@ import sound.Processing
 import sound.ui.filter.FilterPoint
 
 class Background(sketch: Processing): Component(sketch, Order.Priority.Background) {
-    val color = sketch.color(152, 238, 204)
+    private val color = sketch.color(152, 238, 204)
     
     override fun update(): State = State.Alive
 

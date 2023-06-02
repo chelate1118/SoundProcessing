@@ -12,7 +12,7 @@ abstract class Component(
     val sketch: Processing,
     priority: Order.Priority
 ): Comparable<Component> {
-    protected val order = Order(priority)
+    private val order = Order(priority)
 
     open fun onCreated() {}
     abstract fun update(): State
@@ -25,8 +25,8 @@ abstract class Component(
     override fun compareTo(other: Component) = order.compareTo(other.order)
 }
 
-class Order(val priority: Priority): Comparable<Order> {
-    val id = currentId++
+class Order(private val priority: Priority): Comparable<Order> {
+    private val id = currentId++
 
     enum class Priority {
         Background,

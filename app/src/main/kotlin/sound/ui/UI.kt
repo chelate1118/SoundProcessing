@@ -3,7 +3,7 @@ package sound.ui
 import sound.Processing
 import java.util.*
 
-class UI(val sketch: Processing) {
+class UI(private val sketch: Processing) {
     private val uiComponents: TreeSet<Component> = TreeSet()
     private val tempRemove = ArrayList<Component>()
     private val tempCreate = ArrayList<Component>()
