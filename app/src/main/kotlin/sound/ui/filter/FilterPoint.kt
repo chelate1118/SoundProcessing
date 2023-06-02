@@ -1,11 +1,12 @@
 package sound.ui.filter
 
+import processing.core.PVector
 import sound.Processing
 import sound.ui.Component
 import sound.ui.Order
 import sound.ui.State
 
-class Filter(sketch: Processing): Component(sketch, Order.Priority.Top) {
+class FilterPoint(sketch: Processing, position: PVector): Component(sketch, Order.Priority.Top) {
     override fun onCreated() {
         TODO("Not yet implemented")
     }
