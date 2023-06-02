@@ -1,4 +1,5 @@
 mod filter;
+pub(super) mod play;
 
 use std::sync::Mutex;
 use filter::BandPass;
@@ -16,14 +17,14 @@ pub(super) fn add_filter() {
     )
 }
 
-fn next_sample() -> i32 {
+pub(crate) fn next_sample() -> i32 {
     let next = (*SAMPLE.lock().unwrap() + 1) % 48000;
     *SAMPLE.lock().unwrap() = next;
     
     next
 }
 
-pub(super) fn write(data: &mut[f32], _: &cpal::OutputCallbackInfo) {
+pub(super) fn write(data: &mut[f32]) {
     for frame in data.chunks_mut(2) {
         let sample = next_sample();
         let mut value = PERLIN.get([sample as f64 / 100.0, 1.0]) as f32;
