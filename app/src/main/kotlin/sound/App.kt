@@ -22,8 +22,8 @@ class Processing: AdvancedPApplet() {
         ui.draw()
     }
 
-    override fun mouseClicked() {
-        ui.mouseClicked()
+    override fun mousePressed() {
+        ui.mousePressed()
     }
 }
 
