@@ -1,47 +1,65 @@
 package sound.ui
 
 import sound.Processing
+import java.util.*
 
-enum class State {
-    Kill,
-    Alive
-}
+class UI(val sketch: Processing) {
+    private val uiComponents: TreeSet<Component> = TreeSet()
+    private val tempRemove = ArrayList<Component>()
+    private val tempCreate = ArrayList<Component>()
+    private var mouseComponent: Component? = null
 
-abstract class Component(
-    val sketch: Processing,
-    priority: Order.Priority
-): Comparable<Component> {
-    protected val order = Order(priority)
-
-    abstract fun onCreated()
-    abstract fun update(): State
-    abstract fun display()
-    fun onDestroy() {}
-    fun isMouseIn(): Boolean = false
-    fun mouseIn() {}
-    fun mouseClick() {}
-
-    override fun compareTo(other: Component) = order.compareTo(other.order)
-}
-
-class Order(val priority: Priority): Comparable<Order> {
-    val id = currentId++
-    
-    enum class Priority {
-        Background,
-        Low,
-        Top
+    fun setup() {
+        createComponent(Background(sketch))
     }
-    
-    override fun compareTo(other: Order): Int {
-        priority.compareTo(other.priority).let {
-            if (it != 0) return it
+
+    fun draw() {
+        applyAllTemp()
+
+        for (component in uiComponents) {
+            val state = component.update()
+
+            if (state == State.Kill) {
+                tempRemove.add(component)
+            }
+
+            component.display()
         }
-        
-        return id.compareTo(other.id)
     }
-    
-    companion object {
-        var currentId = 0
+
+    fun mouseClicked() {
+        mouseComponent = null
+
+        for (component in uiComponents) {
+            if (component.isMouseIn(sketch.mousePosition)) {
+                mouseComponent = component
+            }
+        }
+
+        mouseComponent?.mouseClicked()
     }
+
+    private fun applyAllTemp() {
+        removeAllTemp()
+        createAllTemp()
+    }
+
+    private fun removeAllTemp() {
+        for (component in tempRemove) {
+            component.onDestroy()
+            uiComponents.remove(component)
+        }
+        tempRemove.clear()
+    }
+
+    private fun createAllTemp() {
+        for (component in tempCreate) {
+            component.onCreated()
+            uiComponents.add(component)
+        }
+        tempCreate.clear()
+    }
+
+    fun createComponent(component: Component) = tempCreate.add(component)
+    fun removeComponent(component: Component) = tempRemove.add(component)
 }

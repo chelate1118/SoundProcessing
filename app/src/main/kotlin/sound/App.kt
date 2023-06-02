@@ -4,62 +4,27 @@
 package sound
 
 import processing.core.*
-import sound.rust.Rust
 import sound.ui.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 // Main
-class Processing: PApplet() {
-    private val uiComponents: TreeSet<Component> = TreeSet()
-    private val tempRemove = ArrayList<Component>()
-    private val tempCreate = ArrayList<Component>()
+class Processing: AdvancedPApplet() {
+    val ui = UI(this)
 
     override fun settings() {
         size(800, 800)
     }
     
     override fun setup() {
-        Rust.start()
+        ui.setup()
     }
     
     override fun draw() {
-        applyAllTemp()
-
-        for (component in uiComponents) {
-            val state = component.update()
-
-            if (state == State.Kill) {
-                tempRemove.add(component)
-            }
-
-            component.display()
-        }
+        ui.draw()
     }
 
-    private fun applyAllTemp() {
-        removeAllTemp()
-        createAllTemp()
+    override fun mouseClicked() {
+        ui.mouseClicked()
     }
-
-    private fun removeAllTemp() {
-        for (component in tempRemove) {
-            component.onDestroy()
-            uiComponents.remove(component)
-        }
-        tempRemove.clear()
-    }
-
-    private fun createAllTemp() {
-        for (component in tempCreate) {
-            component.onCreated()
-            uiComponents.add(component)
-        }
-        tempCreate.clear()
-    }
-
-    fun createComponent(component: Component) = tempCreate.add(component)
-    fun removeComponent(component: Component) = tempRemove.add(component)
 }
 
 fun main() {
