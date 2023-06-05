@@ -4,11 +4,20 @@ import processing.core.PVector
 import sound.Processing
 import sound.ui.*
 
-class FilterPoint(sketch: Processing, private var position: PVector): Component(sketch, Order.Priority.Top) {
-    val radius = 20F
-    val style = Style(sketch).apply {
+class FilterPoint(
+    sketch: Processing, position: PVector
+): Component(sketch, Order.Priority.High) {
+    private val radius = 20F
+    private val style = Style(sketch).apply {
         strokeWeight = 3F
         fillColor = sketch.color(121, 224, 238)
+    }
+
+    var position = position
+        private set
+
+    override fun onCreated() {
+        Filter.list.add(this)
     }
 
     override fun update(): State {
@@ -24,4 +33,23 @@ class FilterPoint(sketch: Processing, private var position: PVector): Component(
         return PVector.dist(position, mousePosition) < radius
     }
 
+    override fun mouseOut() {
+        style.apply {
+            strokeColor = sketch.color(0)
+        }
+    }
+
+    override fun mouseIn() {
+        style.apply {
+            strokeColor = sketch.color(31, 31, 255)
+        }
+    }
+
+    override fun compareTo(other: Component): Int {
+        if (other is FilterPoint) {
+            return position.x.compareTo(other.position.x)
+        }
+
+        return super.compareTo(other)
+    }
 }
