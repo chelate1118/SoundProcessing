@@ -1,6 +1,7 @@
 package sound.ui
 
 import sound.Processing
+import sound.ui.filter.FilterGraph
 import java.util.*
 
 class UI(private val sketch: Processing) {
@@ -11,11 +12,20 @@ class UI(private val sketch: Processing) {
 
     fun setup() {
         createComponent(Background(sketch))
+        createComponent(FilterGraph(sketch))
     }
 
     fun draw() {
         applyAllTemp()
+        updateMouseComponent()
+        updateAllComponent()
+    }
 
+    fun mousePressed() {
+        mouseComponent?.mouseClicked()
+    }
+
+    private fun updateAllComponent() {
         for (component in uiComponents) {
             val state = component.update()
 
@@ -27,16 +37,26 @@ class UI(private val sketch: Processing) {
         }
     }
 
-    fun mousePressed() {
-        mouseComponent = null
+    private fun updateMouseComponent() {
+        val prevMouseComponent = mouseComponent
+        mouseComponent = findMouseComponent()
 
-        for (component in uiComponents) {
+        if (prevMouseComponent != mouseComponent) {
+            prevMouseComponent?.mouseOut()
+            mouseComponent?.mouseIn()
+        }
+    }
+
+    private fun findMouseComponent(): Component? {
+        val reverseIterator = uiComponents.descendingIterator()
+
+        while (reverseIterator.hasNext()) {
+            val component = reverseIterator.next()
             if (component.isMouseIn(sketch.mousePosition)) {
-                mouseComponent = component
+                return component
             }
         }
-
-        mouseComponent?.mouseClicked()
+        return null
     }
 
     private fun applyAllTemp() {
