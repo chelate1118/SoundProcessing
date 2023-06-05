@@ -19,6 +19,7 @@ abstract class Component(
     abstract fun display()
     open fun onDestroy() {}
     abstract fun isMouseIn(mousePosition: PVector): Boolean
+    open fun mouseOut() {}
     open fun mouseIn() {}
     open fun mouseClicked() {}
 
@@ -31,6 +32,7 @@ class Order(private val priority: Priority): Comparable<Order> {
     enum class Priority {
         Background,
         Low,
+        High,
         Top
     }
 
