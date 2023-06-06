@@ -9,6 +9,7 @@ class UI(private val sketch: Processing) {
     private val tempRemove = ArrayList<Component>()
     private val tempCreate = ArrayList<Component>()
     private var mouseComponent: Component? = null
+    private var mousePressedComponent: Component? = null
 
     fun setup() {
         createComponent(Background(sketch))
@@ -22,7 +23,12 @@ class UI(private val sketch: Processing) {
     }
 
     fun mousePressed() {
-        mouseComponent?.mouseClicked()
+        mousePressedComponent = mouseComponent
+        mousePressedComponent?.mouseClicked()
+    }
+
+    fun mouseReleased() {
+        mousePressedComponent = null
     }
 
     private fun updateAllComponent() {
@@ -45,6 +51,8 @@ class UI(private val sketch: Processing) {
             prevMouseComponent?.mouseOut()
             mouseComponent?.mouseIn()
         }
+
+        mousePressedComponent?.mousePressed()
     }
 
     private fun findMouseComponent(): Component? {

@@ -22,6 +22,7 @@ abstract class Component(
     open fun mouseOut() {}
     open fun mouseIn() {}
     open fun mouseClicked() {}
+    open fun mousePressed() {}
 
     override fun compareTo(other: Component) = order.compareTo(other.order)
 }

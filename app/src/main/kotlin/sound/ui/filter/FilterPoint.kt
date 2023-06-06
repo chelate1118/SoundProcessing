@@ -45,6 +45,10 @@ class FilterPoint(
         }
     }
 
+    override fun mousePressed() {
+        position = sketch.mousePosition
+    }
+
     override fun compareTo(other: Component): Int {
         if (other is FilterPoint) {
             return position.x.compareTo(other.position.x)

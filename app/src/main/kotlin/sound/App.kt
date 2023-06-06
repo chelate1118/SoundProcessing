@@ -25,6 +25,10 @@ class Processing: AdvancedPApplet() {
     override fun mousePressed() {
         ui.mousePressed()
     }
+
+    override fun mouseReleased() {
+        ui.mouseReleased()
+    }
 }
 
 fun main() {
