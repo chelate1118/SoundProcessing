@@ -1,6 +1,8 @@
 package sound.ui
 
 import sound.Processing
+import sound.ui.button.AddFilterPointButton
+import sound.ui.button.LoadFileButton
 import sound.ui.filter.FilterGraph
 import java.util.*
 
@@ -12,8 +14,14 @@ class UI(private val sketch: Processing) {
     private var mousePressedComponent: Component? = null
 
     fun setup() {
-        createComponent(Background(sketch))
-        createComponent(FilterGraph(sketch))
+        listOf(
+            Background(sketch),
+            FilterGraph(sketch),
+            AddFilterPointButton(sketch),
+            LoadFileButton(sketch)
+        ).map {
+            createComponent(it)
+        }
     }
 
     fun draw() {
