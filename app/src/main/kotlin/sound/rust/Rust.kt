@@ -4,33 +4,30 @@ import java.io.*
 import java.net.*
 
 object Rust {
-    const val PORT: Int = 13924
-    const val PATH: String = "..\\RustCore"
-    
-    lateinit var socket: Socket
-    lateinit var outputStream: OutputStream
-    lateinit var printWriter: PrintWriter
-    lateinit var bufferedInputStream: BufferedInputStream
+    private const val SUBPROCESS = false
+    private const val PORT: Int = 13924
+    private const val PATH: String = "../RustCore"
+    private lateinit var printWriter: PrintWriter
     
     fun start() {
+        if (SUBPROCESS) {
+            Runtime.getRuntime().exec(arrayOf(
+                "cargo", "run", "--manifest-path", "$PATH/Cargo.toml", "-r", "--", "$PORT"
+            ))
+        }
+
         println("Accepting")
 
         val serverSocket = ServerSocket(PORT)
-            socket = serverSocket.accept()
-            println("connected")
+        val socket = serverSocket.accept()
+        println("connected")
 
-        outputStream = socket.getOutputStream()
-
-        printWriter = PrintWriter(socket.getOutputStream())
-
-        with (printWriter) {
-                println("From Kotlin: 9099")
-                flush()
-        }
+        val outputStream = socket.getOutputStream()
+        printWriter = PrintWriter(outputStream)
     }
 
-    fun sendMessage(message: String?) {
-        printWriter.println(message)
+    fun sendMessage(message: String?, prefix: Char) {
+        printWriter.println("$prefix$message")
         printWriter.flush()
     }
 }

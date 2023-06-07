@@ -7,7 +7,7 @@ object Filter {
     var currentAudio: String? = null
         set(value) {
             if (field != value) {
-                Rust.sendMessage(value)
+                Rust.sendMessage(value, 'p')
             }
             field = value
         }
