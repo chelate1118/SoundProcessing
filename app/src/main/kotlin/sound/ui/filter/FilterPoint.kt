@@ -7,6 +7,14 @@ import sound.ui.*
 class FilterPoint(
     sketch: Processing, position: PVector
 ): Component(sketch, Order.Priority.High) {
+    companion object {
+        fun new(sketch: Processing): FilterPoint {
+            sketch.let {
+                return FilterPoint(it, PVector(it.width / 2F, it.height / 2F))
+            }
+        }
+    }
+
     private val radius = 20F
     private val style = Style(sketch).apply {
         strokeWeight = 3F
@@ -51,7 +59,13 @@ class FilterPoint(
 
     override fun compareTo(other: Component): Int {
         if (other is FilterPoint) {
-            return position.x.compareTo(other.position.x)
+            val comparePositionX = position.x.compareTo(other.position.x)
+
+            if (comparePositionX == 0) {
+                return super.compareTo(other)
+            }
+
+            return comparePositionX
         }
 
         return super.compareTo(other)
