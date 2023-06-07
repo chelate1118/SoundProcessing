@@ -9,15 +9,10 @@ object Rust {
     
     lateinit var socket: Socket
     lateinit var outputStream: OutputStream
+    lateinit var printWriter: PrintWriter
     lateinit var bufferedInputStream: BufferedInputStream
     
     fun start() {
-//        val buildProcess = ProcessBuilder("cargo", "build", "--manifest-path", "$PATH\\Cargo.toml", "-r", "--", "$PORT")
-//        buildProcess.start().waitFor()
-
-//        val runProcess = ProcessBuilder("$PATH\\target\\release\\rust_core.exe", "$PORT")
-//        runProcess.start()
-
         println("Accepting")
 
         val serverSocket = ServerSocket(PORT)
@@ -26,11 +21,16 @@ object Rust {
 
         outputStream = socket.getOutputStream()
 
-        val printWriter = PrintWriter(socket.getOutputStream())
+        printWriter = PrintWriter(socket.getOutputStream())
 
         with (printWriter) {
                 println("From Kotlin: 9099")
                 flush()
         }
+    }
+
+    fun sendMessage(message: String?) {
+        printWriter.println(message)
+        printWriter.flush()
     }
 }

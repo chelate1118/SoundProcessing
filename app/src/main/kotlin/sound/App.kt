@@ -4,13 +4,17 @@
 package sound
 
 import processing.core.*
+import sound.rust.Rust
 import sound.ui.*
+import sound.ui.filter.Filter
+import java.io.File
 
 // Main
 class Processing: AdvancedPApplet() {
     val ui = UI(this)
 
     override fun settings() {
+        Rust.start()
         size(800, 800)
     }
     
@@ -28,6 +32,13 @@ class Processing: AdvancedPApplet() {
 
     override fun mouseReleased() {
         ui.mouseReleased()
+    }
+
+    fun fileSelected(selection: File?) {
+        println(selection)
+        selection?.let {
+            Filter.currentAudio = it.absolutePath
+        }
     }
 }
 
