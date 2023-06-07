@@ -1,45 +1,43 @@
-use tokio::{net::{TcpSocket, TcpStream}, io::AsyncWriteExt};
+use tokio::net::TcpStream;
 
-pub(crate) struct Kotlin {
-    addr: String,
-    stream: TcpStream
+pub(crate) async fn start_connection() -> Result<(), std::io::Error> {
+    let stream = get_stream().await;
+
+    listen(&stream).await
 }
 
-impl Kotlin {
-    pub(crate) async fn new() -> Self {
-        let port = std::env::args()
-                .collect::<Vec<String>>()[1]
-                .clone();
-        
-        let addr = format!("127.0.0.1:{port}");
-        
-        let stream = TcpStream::connect(&addr).await.unwrap();
-        
-        Self { addr, stream }
-    }
-    
-    pub(crate) async fn listen(&self) -> Result<(), std::io::Error> {
-        loop {
-            self.stream.readable().await?;
-            
-            let mut buf = [0u8; 4096];
-            
-            match self.stream.try_read(&mut buf) {
-                Ok(0) => break,
-                Ok(n) => {
-                    println!("read {n} bytes");
-                    println!("{}", std::str::from_utf8(&buf).unwrap())
-                },
-                Err(ref e) if e.kind() == tokio::io::ErrorKind::WouldBlock => {
-                    println!("wouldblock");
-                        continue
-                    }
-                Err(e) => {
-                    return Err(e.into())
-                }
+async fn get_stream() -> TcpStream {
+    TcpStream::connect(&get_address()).await.unwrap()
+}
+
+fn get_address() -> String {
+    let args = std::env::args().collect::<Vec<String>>();
+    let port = &args[1];
+
+    format!("127.0.0.1:{port}")
+}
+
+async fn listen(stream: &TcpStream) -> Result<(), std::io::Error> {
+    loop {
+        stream.readable().await?;
+
+        let mut buf = [0u8; 4096];
+
+        match stream.try_read(&mut buf) {
+            Ok(0) => break,
+            Ok(n) => {
+                println!("read {n} bytes");
+                println!("{}", std::str::from_utf8(&buf).unwrap())
+            },
+            Err(ref e) if e.kind() == tokio::io::ErrorKind::WouldBlock => {
+                println!("wouldblock");
+                continue
+            }
+            Err(e) => {
+                return Err(e.into())
             }
         }
-        
-        Ok(())
     }
+
+    Ok(())
 }

@@ -9,8 +9,7 @@ async fn main() {
     let audio_play = sound::play::AudioPlay::new();
     audio_play.start_stream();
 
-    let kotlin = kotlin::Kotlin::new().await;
-    kotlin.listen().await.unwrap();
+    kotlin::start_connection().await.unwrap();
 
     println!("Hello, World!");
 
