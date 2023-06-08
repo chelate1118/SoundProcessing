@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+spin_sleep = "1.1.1"
 cpal = "0.15.2"
 lazy_static = "1.4.0"
-noise = "0.8.2"
 rodio = "0.17.1"
 tokio = { version = "1.28.2", features = ["full"] }
