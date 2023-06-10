@@ -8,7 +8,5 @@ extern crate lazy_static;
 async fn main() {
     println!("Start");
     std::thread::spawn(sound::audio_play);
-    spin_sleep::sleep(std::time::Duration::from_secs(9));
-
-//    kotlin::start_connection().await.unwrap();
+    kotlin::start_connection().await.unwrap();
 }
