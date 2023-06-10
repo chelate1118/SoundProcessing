@@ -2,6 +2,7 @@ package sound.ui.filter
 
 import processing.core.PVector
 import sound.Processing
+import sound.rust.Rust
 import sound.ui.*
 
 class FilterPoint(
@@ -13,6 +14,8 @@ class FilterPoint(
                 return FilterPoint(it, PVector(it.width / 2F, it.height / 2F))
             }
         }
+
+        private var currentIndex = 0.toChar()
     }
 
     private val radius = 20F
@@ -21,11 +24,14 @@ class FilterPoint(
         fillColor = sketch.color(121, 224, 238)
     }
 
+    private val index = currentIndex++
+
     var position = position
         private set
 
     override fun onCreated() {
         Filter.list.add(this)
+        Rust.sendMessage("a", 'a')
     }
 
     override fun update(): State {
@@ -55,6 +61,9 @@ class FilterPoint(
 
     override fun mousePressed() {
         position = sketch.mousePosition
+
+        val frequency = (position.x / sketch.width * 256F).toInt().toChar()
+        Rust.sendMessage("$index$frequency", 'm')
     }
 
     override fun compareTo(other: Component): Int {

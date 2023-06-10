@@ -2,7 +2,7 @@ mod input;
 
 use tokio::net::TcpStream;
 
-const BUF_SIZE: usize = 4096;
+const BUF_SIZE: usize = 256;
 
 pub(crate) async fn start_connection() -> Result<(), std::io::Error> {
     let stream = get_stream().await;
@@ -29,9 +29,9 @@ async fn listen(stream: &TcpStream) -> Result<(), std::io::Error> {
 
         match stream.try_read(&mut buf) {
             Ok(0) => break,
-            Ok(n) => {
-                println!("read {n} bytes");
-                dbg!(input::Input::from_byte_array(buf));
+            Ok(_) => {
+                let input = input::Input::from_byte_array(buf);
+                input.apply();
             },
             Err(ref e) if e.kind() == tokio::io::ErrorKind::WouldBlock => {
                 println!("wouldblock");
