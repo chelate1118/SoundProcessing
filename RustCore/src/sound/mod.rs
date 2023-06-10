@@ -2,10 +2,9 @@ mod filter;
 
 use cpal::Sample;
 use cpal::traits::{HostTrait, DeviceTrait, StreamTrait};
-use rodio::{Decoder, Source};
+use rodio::Decoder;
 use std::ops::DerefMut;
 use std::sync::Mutex;
-use std::time::Duration;
 use filter::BandPass;
 use std::io::BufReader;
 use std::fs::File;
