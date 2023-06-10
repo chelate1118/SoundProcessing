@@ -1,13 +1,14 @@
 
 static TWO_PI: f32 = 2.0 * std::f32::consts::PI;
 
+#[derive(Debug, Clone, Copy)]
 pub(crate) struct BandPass {
     high_pass: HighPass,
     low_pass: LowPass
 }
 
 impl BandPass {
-    pub(super) fn new(frequency: f32, amplitude: f32, range: f32) -> Self {
+    pub(crate) fn new(frequency: f32, amplitude: f32, range: f32) -> Self {
         Self {
             high_pass: HighPass::new(frequency, amplitude, range),
             low_pass: LowPass::new(frequency, amplitude, range)
@@ -18,8 +19,14 @@ impl BandPass {
         let val1 = self.low_pass.next_value(value, time);
         self.high_pass.next_value(val1, time)
     }
+
+    pub(crate) fn change_to(&mut self, filter: BandPass) {
+        self.high_pass.change_to(filter.high_pass);
+        self.low_pass.change_to(filter.low_pass);
+    }
 }
 
+#[derive(Debug, Clone, Copy)]
 struct HighPass {
     r: f32,
     c: f32,
@@ -48,8 +55,14 @@ impl HighPass {
         
         value - self.q / self.c
     }
+
+    pub(crate) fn change_to(&mut self, filter: HighPass) {
+        self.r = filter.r;
+        self.c = filter.c;
+    }
 }
 
+#[derive(Debug, Clone, Copy)]
 struct LowPass {
     r: f32,
     c: f32,
@@ -77,5 +90,10 @@ impl LowPass {
         self.q = self.q + (q_inf - self.q) * (1.0 - (-circuit).exp());
 
         self.q / self.c
+    }
+
+    pub(crate) fn change_to(&mut self, filter: LowPass) {
+        self.r = filter.r;
+        self.c = filter.c;
     }
 }

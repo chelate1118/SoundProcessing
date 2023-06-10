@@ -1,9 +1,8 @@
-mod filter;
+pub(crate) mod filter;
 
 use cpal::Sample;
 use cpal::traits::{HostTrait, DeviceTrait, StreamTrait};
-use rodio::Decoder;
-use std::ops::DerefMut;
+use rodio::{Decoder, Source};
 use std::sync::Mutex;
 use filter::BandPass;
 use std::io::BufReader;
@@ -13,7 +12,7 @@ use std::fs::File;
 lazy_static! {
     static ref SAMPLE: Mutex<usize> = Mutex::new(0);
     static ref FILTERS: Mutex<Vec<BandPass>> = Mutex::new(Vec::new());
-    static ref AUDIO: Mutex<Option<Decoder<BufReader<File>>>> = Mutex::new(None);
+    static ref AUDIO_DATA: Mutex<Option<Vec<f32>>> = Mutex::new(None);
 }
 
 pub(crate) fn audio_play() {
@@ -36,18 +35,7 @@ pub(crate) fn audio_play() {
 
     stream.play().unwrap();
 
-    println!("Audio Start");
-    play_audio_file();
-
-    spin_sleep::sleep(std::time::Duration::from_secs(4));
-
-    println!("{}", next_sample());
-    play_audio_file();
-    add_filter();
-    println!("Filter!");
-    spin_sleep::sleep(std::time::Duration::from_secs(4));
-
-    println!("{}", next_sample());
+    spin_sleep::sleep(std::time::Duration::from_secs(std::u64::MAX));
 }
 
 fn next_sample() -> usize {
@@ -61,19 +49,28 @@ fn reset_sample() {
     *SAMPLE.lock().unwrap() = 0;
 }
 
-pub(super) fn add_filter() {
+pub(crate) fn add_filter(filter: BandPass) {
     FILTERS.lock().unwrap().push(
-        BandPass::new(254.0, 1.0, 0.8)
+        filter
     )
 }
 
-pub(crate) fn play_audio_file() {
+pub(crate) fn move_filter(index: usize, filter: BandPass) {
+    FILTERS.lock().unwrap()[index].change_to(filter);
+}
+
+pub(crate) fn play_audio_file(path: &str) {
     reset_sample();
 
-    let file = BufReader::new(File::open("../sample_audio.mp3").unwrap());
-    let source = Decoder::new(file).unwrap();
+    let file = BufReader::new(File::open(path).unwrap());
+    let decoder = Decoder::new(file).unwrap();
 
-    *AUDIO.lock().unwrap() = Some(source)
+    let audio_data: Vec<f32> = decoder
+        .convert_samples::<f32>()
+        .map(|sample| sample as f32)
+        .collect();
+
+    *AUDIO_DATA.lock().unwrap() = Some(audio_data);
 }
 
 pub(super) fn write(
@@ -84,9 +81,9 @@ pub(super) fn write(
 
         let mut value: f32 = Sample::EQUILIBRIUM;
 
-        if let Some(iter) = AUDIO.lock().unwrap().deref_mut() {
-            if let Some(next) = iter.next() {
-                value = next as f32 * 0.001;
+        if let Some(data) = &*AUDIO_DATA.lock().unwrap() {
+            if let Some(next) = data.get(sample) {
+                value = *next;
             }
         }
 
