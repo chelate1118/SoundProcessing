@@ -2,7 +2,6 @@ package sound.ui
 
 import processing.core.PVector
 import sound.Processing
-import sound.ui.filter.FilterPoint
 
 class Background(sketch: Processing): Component(sketch, Order.Priority.Background) {
     private val color = sketch.color(152, 238, 204)
@@ -14,10 +13,4 @@ class Background(sketch: Processing): Component(sketch, Order.Priority.Backgroun
     }
     
     override fun isMouseIn(mousePosition: PVector): Boolean = true
-
-    override fun mouseClicked() {
-        with (sketch) {
-            ui.createComponent(FilterPoint(this, mousePosition))
-        }
-    }
 }
