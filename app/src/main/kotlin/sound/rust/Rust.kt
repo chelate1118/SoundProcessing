@@ -4,22 +4,24 @@ import java.io.*
 import java.net.*
 
 object Rust {
-    private const val SUBPROCESS = false
+    private const val SUBPROCESS = true
     private const val PORT: Int = 13924
     private const val PATH: String = "../RustCore"
     private lateinit var printWriter: PrintWriter
     
     fun start() {
-        if (SUBPROCESS) {
-            Runtime.getRuntime().exec(arrayOf(
-                "cargo", "run", "--manifest-path", "$PATH/Cargo.toml", "-r", "--", "$PORT"
-            ))
-        }
-
         println("Accepting")
 
         val serverSocket = ServerSocket(PORT)
+
+        if (SUBPROCESS) {
+            Runtime.getRuntime().exec(arrayOf(
+                "cargo", "run", "--manifest-path", "$PATH/Cargo.toml", "--release", "--", "$PORT"
+            ))
+        }
+
         val socket = serverSocket.accept()
+
         println("connected")
 
         val outputStream = socket.getOutputStream()

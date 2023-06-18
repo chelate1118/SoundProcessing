@@ -38,7 +38,7 @@ impl HighPass {
         let ex_frequency = frequency / range;
 
         let rc = 1.0 / TWO_PI / ex_frequency;
-        let impedance = 1.0 / amplitude.sqrt();
+        let impedance = 1.0 / amplitude.powf(3.0);
 
         let r = impedance / 2f32.sqrt();
         let c = rc / r;

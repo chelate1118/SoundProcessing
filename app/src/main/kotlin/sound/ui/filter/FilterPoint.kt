@@ -28,10 +28,21 @@ class FilterPoint(
 
     var position = position
         private set
+    private val message: String
+        get() {
+            val frequency = (position.x / sketch.width * 255F).coerceIn(0F, 254F) + 1
+            val frequencyChar = frequency.toInt().toChar()
+
+            val amplitude = (position.y / sketch.height * 255F).coerceIn(0F, 254F) + 1
+            val amplitudeChar = amplitude.toInt().toChar()
+
+            return "$frequencyChar$amplitudeChar"
+        }
 
     override fun onCreated() {
         Filter.list.add(this)
-        Rust.sendMessage("a", 'a')
+
+        Rust.sendMessage(message, 'a')
     }
 
     override fun update(): State {
@@ -62,8 +73,7 @@ class FilterPoint(
     override fun mousePressed() {
         position = sketch.mousePosition
 
-        val frequency = (position.x / sketch.width * 256F).toInt().toChar()
-        Rust.sendMessage("$index$frequency", 'm')
+        Rust.sendMessage("$index$message", 'm')
     }
 
     override fun compareTo(other: Component): Int {

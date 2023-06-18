@@ -22,17 +22,17 @@ impl Input {
             ),
             b'a' => Input::FilterAdd(
                 BandPass::new(
-                    (buffer[1]as i32 * 20) as f32,
+                    1.03f32.powi(buffer[1]as i32 / 2 + 150),
                     1.0,
-                    1.5
+                    (buffer[2]as f32 - 128.0) / 180.0 + 1.0
                 )
                 ),
             b'm' => Input::FilterMove(
                 buffer[1] as usize,
                 BandPass::new(
-                    (buffer[2]as i32 * 20) as f32,
+                    1.03f32.powi(buffer[2]as i32 / 2 + 150),
                     1.0,
-                    1.5
+                    (buffer[3]as f32 - 128.0) / 180.0 + 1.0,
                 )
                 ),
             _ => unreachable!()

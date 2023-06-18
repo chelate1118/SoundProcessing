@@ -34,7 +34,6 @@ async fn listen(stream: &TcpStream) -> Result<(), std::io::Error> {
                 input.apply();
             },
             Err(ref e) if e.kind() == tokio::io::ErrorKind::WouldBlock => {
-                println!("wouldblock");
                 continue
             }
             Err(e) => {
