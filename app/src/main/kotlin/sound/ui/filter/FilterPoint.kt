@@ -4,6 +4,9 @@ import processing.core.PVector
 import sound.Processing
 import sound.rust.Rust
 import sound.ui.*
+import kotlin.math.PI
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class FilterPoint(
     sketch: Processing, position: PVector
@@ -28,16 +31,38 @@ class FilterPoint(
 
     var position = position
         private set
+
+    private val frequencyRust
+        get() = (position.x / sketch.width * 255F).coerceIn(0F, 254F) + 1
+
+    private val qualityRust
+        get() = ((1 - position.y / sketch.height) * 255F).coerceIn(0F, 254F) + 1
+
     private val message: String
         get() {
-            val frequency = (position.x / sketch.width * 255F).coerceIn(0F, 254F) + 1
-            val frequencyChar = frequency.toInt().toChar()
+            val frequencyChar = frequencyRust.toInt().toChar()
+            val qualityChar = qualityRust.toInt().toChar()
 
-            val amplitude = (position.y / sketch.height * 255F).coerceIn(0F, 254F) + 1
-            val amplitudeChar = amplitude.toInt().toChar()
-
-            return "$frequencyChar$amplitudeChar"
+            return "$frequencyChar$qualityChar"
         }
+
+    fun amplitudeFromX(x: Float): Float {
+        val xRust = (x / sketch.width * 255F).coerceIn(0F, 254F) + 1
+        val frequency = 1.03.pow(xRust.toDouble() / 2 + 150)
+        val aimedFrequency = 1.03.pow(frequencyRust.toDouble() / 2 + 150)
+        val quality = (qualityRust - 128.0) / 180.0 + 1.0
+        val highPassFrequency = aimedFrequency / quality
+        val lowPassFrequency = aimedFrequency * quality
+        val highPassFrequencyRC = 0.5 / PI / highPassFrequency
+        val lowPassFrequencyRC = 0.5 / PI / lowPassFrequency
+        val highPass2PiFRC = 2.0 * PI * frequency * highPassFrequencyRC
+        val lowPass2PiFRC = 2.0 * PI * frequency * lowPassFrequencyRC
+
+        val highPassAmplitude = 1 / sqrt(1 + (1 / highPass2PiFRC).pow(2))
+        val lowPassAmplitude = 1 / lowPass2PiFRC / sqrt(1 + (1 / lowPass2PiFRC).pow(2))
+
+        return (highPassAmplitude * lowPassAmplitude).toFloat()
+    }
 
     override fun onCreated() {
         Filter.list.add(this)

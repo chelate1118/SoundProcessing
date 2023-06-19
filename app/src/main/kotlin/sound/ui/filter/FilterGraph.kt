@@ -8,6 +8,10 @@ import sound.ui.State
 import sound.ui.Style
 
 class FilterGraph(sketch: Processing): Component(sketch, Order.Priority.Low) {
+    private val style = Style(sketch).apply {
+        fill = false
+    }
+
     override fun update(): State {
         Filter.list.sort()
         
@@ -15,10 +19,22 @@ class FilterGraph(sketch: Processing): Component(sketch, Order.Priority.Low) {
     } 
 
     override fun display() {
-        Style(sketch).apply()
+        style.apply()
         
-        for (i in 1 until Filter.list.size) {
-            sketch.line(Filter.list[i].position, Filter.list[i-1].position)
+        with (sketch) {
+            for (filterPoint in Filter.list) {
+                beginShape()
+
+                for (x in 0 until width) {
+                    val xFloat = x.toFloat()
+                    var yFloat = filterPoint.amplitudeFromX(xFloat) * height
+                    yFloat = (height - yFloat)
+
+                    vertex(xFloat, yFloat)
+                }
+
+                endShape()
+            }
         }
     }
 
